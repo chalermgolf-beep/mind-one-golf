@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mind One Golf — Swing Analysis</title>
+<style>
+  :root {
+    --bg:#050a12; --surface:#0c1624; --border:rgba(255,255,255,0.08);
+    --ink:#e8edf5; --dim:#5a6a82;
+    --c1:#00e5ff; --c2:#ff6b35; --gold:#ffd166; --green:#06d6a0; --purple:#9b5de5;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--ink);font-family:'Sarabun','Tahoma',Arial,sans-serif;font-size:14px;min-height:100vh;}
+
+  .topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+  .topbar-title{font-family:'Courier New',monospace;font-size:11px;letter-spacing:2px;color:var(--c1);}
+  .slide-counter{font-family:'Courier New',monospace;font-size:12px;color:var(--dim);}
+  .slide-counter span{color:var(--gold);}
+  .progress-bar{height:3px;background:rgba(255,255,255,0.05);}
+  .progress-fill{height:100%;background:linear-gradient(90deg,var(--c1),var(--c2));transition:width 0.3s;}
+
+  .main{max-width:900px;margin:0 auto;padding:24px 16px 100px;}
+  .slide{display:none;}
+  .slide.active{display:block;}
+
+  .slide-header{display:flex;align-items:center;gap:12px;margin-bottom:20px;}
+  .slide-num{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:20px;flex-shrink:0;}
+  .slide-meta h2{font-size:18px;font-weight:700;margin-bottom:4px;}
+  .phase-tag{font-family:'Courier New',monospace;font-size:9px;letter-spacing:2px;padding:2px 10px;border-radius:10px;}
+
+  .img-zone{border-radius:16px;overflow:hidden;margin-bottom:16px;background:var(--surface);border:2px dashed rgba(0,229,255,0.2);min-height:260px;display:flex;align-items:center;justify-content:center;position:relative;}
+  .img-zone.has-img{border-style:solid;border-color:var(--border);min-height:unset;}
+  .img-zone img{width:100%;max-height:460px;object-fit:contain;display:block;border-radius:14px;}
+  .img-placeholder{text-align:center;padding:28px 20px;width:100%;}
+  .img-placeholder .icon{font-size:44px;margin-bottom:10px;opacity:0.35;}
+  .img-placeholder p{color:var(--dim);font-size:13px;margin-bottom:6px;line-height:1.6;}
+
+  .url-input-wrap{margin-top:14px;display:flex;flex-direction:column;gap:8px;align-items:center;width:100%;max-width:500px;margin-left:auto;margin-right:auto;}
+  .url-input{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(0,229,255,0.2);color:var(--ink);padding:10px 14px;border-radius:10px;font-size:13px;outline:none;font-family:'Tahoma',Arial,sans-serif;}
+  .url-input:focus{border-color:var(--c1);}
+  .url-input::placeholder{color:var(--dim);}
+  .url-btn{background:var(--c1);color:#050a12;border:none;padding:10px 24px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;width:100%;font-family:'Tahoma',Arial,sans-serif;}
+  .url-btn:hover{background:#00ccee;}
+
+  .how-to{background:rgba(255,209,102,0.06);border:1px solid rgba(255,209,102,0.15);border-radius:10px;padding:12px 14px;margin-top:8px;font-size:12px;color:#b0a070;line-height:1.7;text-align:left;width:100%;max-width:500px;}
+  .how-to strong{color:var(--gold);display:block;margin-bottom:4px;}
+
+  .change-btn{position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.65);border:1px solid rgba(255,255,255,0.15);color:var(--ink);padding:6px 12px;border-radius:8px;font-size:11px;cursor:pointer;backdrop-filter:blur(4px);}
+
+  .content-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+  @media(max-width:560px){.content-grid{grid-template-columns:1fr;}}
+  .box{border-radius:12px;padding:13px 15px;}
+  .box h4{font-family:'Courier New',monospace;font-size:9px;letter-spacing:2px;margin-bottom:7px;}
+  .box ul{list-style:none;padding:0;}
+  .box ul li{font-size:12px;color:#b0c0d8;padding:3px 0 3px 14px;position:relative;line-height:1.5;}
+  .box ul li::before{content:'→';position:absolute;left:0;font-size:10px;opacity:0.5;}
+  .box-c1{background:rgba(0,229,255,0.05);border:1px solid rgba(0,229,255,0.15);}
+  .box-c1 h4{color:var(--c1);}
+  .box-c2{background:rgba(255,107,53,0.05);border:1px solid rgba(255,107,53,0.15);}
+  .box-c2 h4{color:var(--c2);}
+  .box-gold{background:rgba(255,209,102,0.04);border:1px solid rgba(255,209,102,0.12);}
+  .box-gold h4{color:var(--gold);}
+  .box-purple{background:rgba(155,93,229,0.05);border:1px solid rgba(155,93,229,0.15);}
+  .box-purple h4{color:var(--purple);}
+  .box-green{background:rgba(6,214,160,0.04);border:1px solid rgba(6,214,160,0.15);}
+  .box-green h4{color:var(--green);}
+
+  .feeling{border-radius:12px;padding:13px 16px;margin-top:4px;display:flex;gap:10px;align-items:flex-start;font-size:13px;font-weight:600;line-height:1.5;}
+  .feeling-c1{background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.2);color:var(--c1);}
+  .feeling-c2{background:rgba(255,107,53,0.08);border:1px solid rgba(255,107,53,0.2);color:var(--c2);}
+  .feeling-green{background:rgba(6,214,160,0.06);border:1px solid rgba(6,214,160,0.15);color:var(--green);}
+  .feeling-gold{background:rgba(255,209,102,0.07);border:1px solid rgba(255,209,102,0.2);color:var(--gold);}
+  .feeling-icon{font-size:20px;flex-shrink:0;}
+
+  .fault{background:rgba(239,35,60,0.05);border:1px solid rgba(239,35,60,0.2);border-radius:12px;padding:11px 14px;margin-top:10px;}
+  .fault h4{font-family:'Courier New',monospace;font-size:9px;letter-spacing:2px;color:#ef233c;margin-bottom:5px;}
+  .fault li{font-size:12px;color:#c97a85;padding:2px 0 2px 14px;position:relative;list-style:none;}
+  .fault li::before{content:'✕';position:absolute;left:0;font-size:10px;}
+
+  .nav{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+  .nav-btn{background:var(--surface);border:1px solid var(--border);color:var(--ink);padding:10px 20px;border-radius:10px;font-size:13px;cursor:pointer;font-family:'Tahoma',Arial,sans-serif;}
+  .nav-btn:hover{border-color:var(--c1);color:var(--c1);}
+  .nav-btn:disabled{opacity:0.3;cursor:not-allowed;}
+  .nav-btn.primary{background:var(--c1);color:#050a12;border-color:var(--c1);font-weight:700;}
+  .nav-btn.primary:hover{background:#00ccee;}
+  .nav-dots{display:flex;gap:6px;align-items:center;}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--border);cursor:pointer;transition:all 0.2s;}
+  .dot.active{background:var(--c1);width:20px;border-radius:4px;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <span class="topbar-title">◆ MIND ONE GOLF · SWING ANALYSIS</span>
+  <span class="slide-counter">Slide <span id="curSlide">1</span> / 7</span>
+</div>
+<div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:14.3%"></div></div>
+<div class="main" id="main"></div>
+
+<div class="nav">
+  <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)" disabled>← ก่อนหน้า</button>
+  <div class="nav-dots" id="navDots"></div>
+  <button class="nav-btn primary" id="nextBtn" onclick="changeSlide(1)">ถัดไป →</button>
+</div>
+
+<script>
+var slides=[
+  {num:1,color:'#00e5ff',bg:'rgba(0,229,255,0.15)',title:'Top of Backswing — จุด CUE 1 สมบูรณ์',phase:'BACKSWING · สะสมพลัง',phaseColor:'rgba(0,229,255,0.1)',phaseText:'#00e5ff',
+   boxes:[
+     {cls:'box-c1',title:'CUE 1 — FEEL CHECK',items:['ไหล่ซ้าย (lead shoulder) หมุนมาถึงแนวแก้มสะโพกขวาแล้ว ✓','X-Factor สูงสุด — หัวไหล่หมุน ~90° สะโพก ~45°','แขนซ้ายตึง arc กว้างเต็ม — radius ยาวสุด','ข้อมือ hinge สมบูรณ์ ด้ามไม้เกือบขนานพื้น']},
+     {cls:'box-gold',title:'BIOMECHANICS',items:['Shoulder turn ~90° / Hip turn ~45°','พลังงานยืดหยุ่นสะสมใน obliques และ lats','น้ำหนักขาหลัง ~70% — coil position','Knee flex คงที่ ไม่มี sway']},
+     {cls:'box-purple',title:'NEUROSCIENCE',items:['Proprioceptive signal ชัด — สมองรับรู้ว่า "ถึง"','Cerebellum lock ตำแหน่ง — พร้อม transition','ไม่ต้องคิด — ร่างกาย confirm landmark อัตโนมัติ']},
+     {cls:'box-c2',title:'CUE 2 — PREPARE',items:['ระยะต้นคอ → แก้มสะโพกขวา ยังคงที่ ✓','ลำตัวไม่ lean ซ้ายก่อนกำหนด','พร้อม trigger downswing จากขาและสะโพก']}
+   ],
+   feeling:{cls:'feeling-c1',icon:'🎯',text:'<strong>Mind One Cue Word: "ถึง"</strong><br>ความรู้สึก: ไหล่ซ้ายแตะแนวแก้มสะโพกขวา — หยุดตรงนี้ก่อน downswing'},fault:null},
+
+  {num:2,color:'#ff6b35',bg:'rgba(255,107,53,0.15)',title:'Early Downswing — Transition เริ่ม CUE 2',phase:'DOWNSWING · เริ่มส่งพลัง',phaseColor:'rgba(255,107,53,0.1)',phaseText:'#ff6b35',
+   boxes:[
+     {cls:'box-c2',title:'CUE 2 — ACTIVATION',items:['ระยะต้นคอ → แก้มสะโพกขวา เริ่ม "ยืด" คงที่ ✓','สะโพกเริ่ม open ก่อนไหล่ — sequential unwind','ลำตัวส่วนบนยังเอียงไปทางขาหลังเล็กน้อย']},
+     {cls:'box-gold',title:'BIOMECHANICS',items:['Ground reaction force ขาซ้ายเพิ่ม — push phase','Hip lead shoulder ~20-30° — kinetic chain ถูกต้อง','Lag ยังดี — ด้ามไม้ชี้ลง trail arm ยังพับ']},
+     {cls:'box-c1',title:'CUE 1 — VERIFY',items:['ผลจาก CUE 1 ที่ดี: ไหล่เริ่มจาก position ที่ถูกต้อง','Arc กว้าง — มือลงมาในเส้นทางที่ลึกและกว้าง']},
+     {cls:'box-purple',title:'NEUROSCIENCE',items:['Transition = จังหวะ cerebellum สั่ง "ยืด"','สมองโหลดต่ำ — มีแค่ 1 instruction: คงระยะ']}
+   ],
+   feeling:{cls:'feeling-c2',icon:'⚡',text:'<strong>Mind One Cue Word: "ยืด"</strong><br>ความรู้สึก: รักษาระยะห่างต้นคอ–สะโพก ขณะสะโพกเริ่มหมุน'},
+   fault:{items:['Early extension — สะโพกดัน forward ทำให้ระยะยุบ','Casting — มือเร็วกว่าสะโพก ทำให้เสีย lag']}},
+
+  {num:3,color:'#ffd166',bg:'rgba(255,209,102,0.15)',title:'Mid Downswing — Lag Maximum',phase:'DOWNSWING · พลังงานสูงสุด',phaseColor:'rgba(255,209,102,0.1)',phaseText:'#ffd166',
+   boxes:[
+     {cls:'box-c2',title:'CUE 2 — HOLD PHASE',items:['ระยะต้นคอ → แก้มสะโพกขวา คงที่สมบูรณ์ ✓','ต้นคอยังไม่ขยับ forward — สำคัญมาก','ลำตัวเอียง spine angle คงเดิมจาก address']},
+     {cls:'box-gold',title:'BIOMECHANICS',items:['Lag angle สูงสุด — wrist cock ยังคงอยู่','ด้ามไม้ชี้ลง target line — on-plane ✓','Hip กำลัง clear — เปิดพื้นที่ให้แขนผ่าน']},
+     {cls:'box-green',title:'PHYSICS',items:['Double pendulum กำลังทำงาน','ด้ามไม้ = ด้ามแส้ — ยังไม่หยุด','Club head ยัง lag ตาม — พลังงานสะสม']},
+     {cls:'box-purple',title:'NEUROSCIENCE',items:['"ยืด" ยังทำงาน — brain lock ระยะห่าง','ไม่มี conscious thought เพิ่ม — flow state']}
+   ],
+   feeling:{cls:'feeling-c2',icon:'🔒',text:'<strong>Feeling: "ยืด ค้างไว้"</strong><br>ต้นคอต้องไม่ขยับ forward จนกว่าจะถึง impact — นี่คือ key ของ Whip Effect'},fault:null},
+
+  {num:4,color:'#ffffff',bg:'rgba(255,255,255,0.1)',title:'Impact — CUE 2 สมบูรณ์ · Whip Effect',phase:'IMPACT · ส่งพลังงาน 100%',phaseColor:'rgba(255,255,255,0.08)',phaseText:'#ffffff',
+   boxes:[
+     {cls:'box-c2',title:'CUE 2 — PEAK RESULT',items:['ต้นคอด้านหน้า v = 0 ✓ — หยุดนิ่งที่ impact','ระยะต้นคอ → สะโพก = คงที่จาก downswing ✓','นี่คือจุดที่ Whip Effect สมบูรณ์']},
+     {cls:'box-green',title:'PHYSICS — WHIP EFFECT',items:['ต้นคอ (ด้ามแส้) หยุด → หัวไม้รับพลัง 100%','Club head speed สูงสุด ณ จุดนี้','Shaft de-loft สมบูรณ์ — hands ahead of ball']},
+     {cls:'box-gold',title:'BIOMECHANICS',items:['Hip open ~45° ไหล่ยังเกือบ square','Lead leg ตรงแล้ว — แกนหมุนมั่นคง','Weight ~80% lead side','Head behind ball — spine tilt คงเดิม']},
+     {cls:'box-purple',title:'NEUROSCIENCE + ANATOMY',items:['SCM isometric contraction — หยุดนิ่ง','QL + Glutes stabilize — ไม่มี lateral shift','ทุก motor pattern encode แล้วทำงานอัตโนมัติ']}
+   ],
+   feeling:{cls:'feeling-gold',icon:'💥',text:'<strong>Impact = จุดที่ CUE 2 ให้ผลลัพธ์</strong><br>"ถึง" และ "ยืด" รวมกันที่จุดนี้ในเสี้ยววินาที'},fault:null},
+
+  {num:5,color:'#ff6b35',bg:'rgba(255,107,53,0.15)',title:'Early Follow-Through — Natural Release',phase:'FOLLOW-THROUGH · ปล่อยแรง',phaseColor:'rgba(255,107,53,0.1)',phaseText:'#ff6b35',
+   boxes:[
+     {cls:'box-c2',title:'CUE 2 — RELEASE PHASE',items:['หลัง impact ต้นคอเริ่มขยับตามแรง — natural','ระยะห่างยังคงเดิม — ไม่มี collapse ✓','ร่างกายตาม momentum ของหัวไม้']},
+     {cls:'box-gold',title:'BIOMECHANICS',items:['Forearm rotation เกิดขึ้นอัตโนมัติหลัง impact','Lead arm เริ่มพับ — trail arm extend','ขาซ้าย fully extended เป็นแกนหมุน']},
+     {cls:'box-green',title:'PHYSICS',items:['Centrifugal force ดึงแขนให้ extend ออก','Arc กว้างยังคงอยู่ — ball flight ตรง']},
+     {cls:'box-c1',title:'ANATOMY',items:['Subscapularis / pecs เริ่มทำงานใน release','Core ยังคุม spine angle — ไม่ตั้งตรงก่อนกำหนด']}
+   ],
+   feeling:{cls:'feeling-green',icon:'🌊',text:'<strong>Feeling: "ปล่อย"</strong><br>หลัง impact ไม่ต้องคุม — ปล่อยให้แรงหมุนพาร่างกายตามเอง'},fault:null},
+
+  {num:6,color:'#9b5de5',bg:'rgba(155,93,229,0.15)',title:'Mid Follow-Through — Extension สมบูรณ์',phase:'FOLLOW-THROUGH · Extension',phaseColor:'rgba(155,93,229,0.1)',phaseText:'#9b5de5',
+   boxes:[
+     {cls:'box-gold',title:'BIOMECHANICS',items:['แขนทั้งสองเหยียดออกเต็ม — maximum extension','Hip fully open หันหน้าไป target','Spine ตั้งตรงเริ่มต้น — torso rising','น้ำหนักถ่ายมา lead side ~90%']},
+     {cls:'box-green',title:'PHYSICS',items:['Club arc กว้างสุดในช่วง follow-through','Centrifugal force ยังดึงแขนออก','Club face square — ผล D-Plane ดี']},
+     {cls:'box-c2',title:'CUE 2 — RESULT VERIFY',items:['ลำตัวส่วนบนเริ่มตาม — ผลจาก CUE 2 ที่ถูกต้อง','ไม่มี reverse pivot — weight transfer สมบูรณ์']},
+     {cls:'box-purple',title:'MENTAL FOCUS',items:['Flow state สมบูรณ์ — ทุกอย่างทำงานอัตโนมัติ']}
+   ],
+   feeling:{cls:'feeling-green',icon:'✅',text:'<strong>Feeling: "ผ่านไปแล้ว"</strong><br>ถ้า CUE 1 และ CUE 2 ถูกต้อง — ตำแหน่งนี้จะเกิดขึ้นเองโดยอัตโนมัติ'},fault:null},
+
+  {num:7,color:'#ffd166',bg:'rgba(255,209,102,0.15)',title:'Finish Position — Balance สมบูรณ์',phase:'FINISH · Proof สุดท้าย',phaseColor:'rgba(255,209,102,0.1)',phaseText:'#ffd166',
+   boxes:[
+     {cls:'box-gold',title:'BIOMECHANICS',items:['ไม้อยู่หลังคอซ้าย — full finish ✓','Hip และไหล่หันหน้าไป target เต็มที่','Lead leg ตรง รับน้ำหนักเกือบ 100%','Trail foot up บนปลายเท้า — heel lifted']},
+     {cls:'box-green',title:'BALANCE CHECK',items:['ยืน hold finish ได้ 3+ วินาที ✓','ไม่ล้ม ไม่ต้องก้าวเท้า — CoG คงที่','นี่คือ proof ว่า CUE 2 ทำงานถูกต้อง']},
+     {cls:'box-c2',title:'CUE 2 — FINAL PROOF',items:['Finish สมดุล = CUE 2 สำเร็จ ✓','ไม่มี sway = ระยะห่างคงที่ตลอด downswing']},
+     {cls:'box-purple',title:'MENTAL FOCUS',items:['Hold finish = สัญญาณยืนยันให้ cerebellum','ทำซ้ำ = myelination เร็วขึ้น']}
+   ],
+   feeling:{cls:'feeling-gold',icon:'🏆',text:'<strong>Finish = Report Card ของสวิง</strong><br>สมดุลดี = CUE 1 + CUE 2 ถูกต้องทั้งคู่ / เสียสมดุล = ย้อนกลับแก้ที่ CUE 2'},fault:null}
+];
+
+var current=0;
+var images=new Array(7).fill(null);
+
+function buildSlides(){
+  var main=document.getElementById('main');
+  var dots=document.getElementById('navDots');
+  main.innerHTML='';dots.innerHTML='';
+  slides.forEach(function(s,i){
+    var d=document.createElement('div');
+    d.className='dot'+(i===0?' active':'');
+    d.onclick=(function(idx){return function(){goTo(idx);};})(i);
+    dots.appendChild(d);
+    var el=document.createElement('div');
+    el.className='slide'+(i===0?' active':'');
+    el.id='slide'+i;
+    var boxHtml='<div class="content-grid">';
+    s.boxes.forEach(function(b){
+      boxHtml+='<div class="box '+b.cls+'"><h4>'+b.title+'</h4><ul>';
+      b.items.forEach(function(it){boxHtml+='<li>'+it+'</li>';});
+      boxHtml+='</ul></div>';
+    });
+    boxHtml+='</div>';
+    var faultHtml='';
+    if(s.fault){
+      faultHtml='<div class="fault"><h4>⚠ FAULT ที่ต้องหลีกเลี่ยง</h4><ul>';
+      s.fault.items.forEach(function(it){faultHtml+='<li>'+it+'</li>';});
+      faultHtml+='</ul></div>';
+    }
+    el.innerHTML=
+      '<div class="slide-header">'+
+        '<div class="slide-num" style="background:'+s.bg+';border:2px solid '+s.color+';color:'+s.color+';">'+s.num+'</div>'+
+        '<div class="slide-meta"><h2>'+s.title+'</h2>'+
+          '<span class="phase-tag" style="background:'+s.phaseColor+';color:'+s.phaseText+';">'+s.phase+'</span>'+
+        '</div>'+
+      '</div>'+
+      '<div class="img-zone" id="imgZone'+i+'">'+renderImgZone(i,s.num)+'</div>'+
+      boxHtml+
+      '<div class="'+s.feeling.cls+' feeling"><div class="feeling-icon">'+s.feeling.icon+'</div><div>'+s.feeling.text+'</div></div>'+
+      faultHtml;
+    main.appendChild(el);
+    bindEnter(i);
+  });
+}
+
+function renderImgZone(i,num){
+  if(images[i]){
+    return '<img src="'+images[i]+'" alt="Position '+(i+1)+'" onerror="imgError('+i+')">'+
+           '<button class="change-btn" onclick="resetImg('+i+')">🔄 เปลี่ยนรูป</button>';
+  }
+  return '<div class="img-placeholder">'+
+    '<div class="icon">🖼️</div>'+
+    '<p>วาง URL รูปภาพ Position '+num+'<br><small style="opacity:0.6;">จาก Google Photos / Facebook / Imgur</small></p>'+
+    '<div class="url-input-wrap">'+
+      '<input class="url-input" id="urlInput'+i+'" placeholder="https://..." type="url">'+
+      '<button class="url-btn" onclick="loadFromUrl('+i+')">+ โหลดรูปภาพ</button>'+
+    '</div>'+
+    '<div class="how-to">'+
+      '<strong>📌 วิธีรับ URL รูปจากมือถือ:</strong>'+
+      'Google Photos: เปิดรูป → Share → Copy link<br>'+
+      'Facebook: กดค้างที่รูป → Copy Image Link<br>'+
+      'Imgur: Upload → Copy direct link (.jpg)'+
+    '</div>'+
+  '</div>';
+}
+
+function bindEnter(i){
+  setTimeout(function(){
+    var inp=document.getElementById('urlInput'+i);
+    if(inp) inp.addEventListener('keydown',function(e){if(e.key==='Enter')loadFromUrl(i);});
+  },100);
+}
+
+function loadFromUrl(idx){
+  var url=document.getElementById('urlInput'+idx).value.trim();
+  if(!url){alert('กรุณาใส่ URL รูปภาพก่อนครับ');return;}
+  images[idx]=url;
+  var zone=document.getElementById('imgZone'+idx);
+  zone.classList.add('has-img');
+  zone.innerHTML=renderImgZone(idx,slides[idx].num);
+}
+
+function imgError(idx){
+  images[idx]=null;
+  var zone=document.getElementById('imgZone'+idx);
+  zone.classList.remove('has-img');
+  zone.innerHTML=renderImgZone(idx,slides[idx].num);
+  bindEnter(idx);
+  alert('โหลดรูปไม่ได้ครับ — ลอง URL อื่น หรือ upload รูปที่ imgur.com ก่อน');
+}
+
+function resetImg(idx){
+  images[idx]=null;
+  var zone=document.getElementById('imgZone'+idx);
+  zone.classList.remove('has-img');
+  zone.innerHTML=renderImgZone(idx,slides[idx].num);
+  bindEnter(idx);
+}
+
+function goTo(idx){
+  document.getElementById('slide'+current).classList.remove('active');
+  document.querySelectorAll('.dot')[current].classList.remove('active');
+  current=idx;
+  document.getElementById('slide'+current).classList.add('active');
+  document.querySelectorAll('.dot')[current].classList.add('active');
+  document.getElementById('curSlide').textContent=current+1;
+  document.getElementById('progressFill').style.width=((current+1)/7*100)+'%';
+  document.getElementById('prevBtn').disabled=current===0;
+  document.getElementById('nextBtn').disabled=current===6;
+  document.getElementById('nextBtn').textContent=current===6?'✓ จบ':'ถัดไป →';
+  window.scrollTo(0,0);
+}
+
+function changeSlide(dir){var n=current+dir;if(n>=0&&n<7)goTo(n);}
+buildSlides();
+</script>
+</body>
+</html>
