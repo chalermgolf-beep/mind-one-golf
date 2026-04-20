@@ -211,22 +211,9 @@ function renderZone(i,num){
   return '<div class="img-placeholder">'+
     '<div class="icon">🖼️</div>'+
     '<p>เพิ่มรูป Position '+num+'</p>'+
-    '<div class="upload-methods">'+
-      '<button class="method-btn method-file" onclick="triggerFile('+i+')">'+
-        '<span class="method-icon">📁</span>เลือกจากเครื่อง'+
-        '<span class="method-sub">Chrome / Safari</span>'+
-      '</button>'+
-      '<button class="method-btn method-url" onclick="toggleUrl('+i+')">'+
-        '<span class="method-icon">🔗</span>วาง URL'+
-        '<span class="method-sub">ทุก browser</span>'+
-      '</button>'+
-    '</div>'+
-    '<div class="url-panel" id="urlPanel'+i+'">'+
-      '<div class="url-row">'+
-        '<input class="url-input" id="urlIn'+i+'" placeholder="https://..." type="url">'+
-        '<button class="url-go" onclick="loadUrl('+i+')">โหลด</button>'+
-      '</div>'+
-    '</div>'+
+    '<button class="method-btn method-file" style="max-width:280px;margin:0 auto;display:block;" onclick="triggerFile('+i+')">'+
+      '<span class="method-icon">📁</span>อัปโหลดรูปภาพ'+
+    '</button>'+
     '<input type="file" id="fileIn'+i+'" accept="image/*" onchange="loadFile(event,'+i+')">'+
   '</div>';
 }
