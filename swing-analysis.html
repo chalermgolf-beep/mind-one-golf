@@ -94,6 +94,84 @@
   .dot{width:8px;height:8px;border-radius:50%;background:var(--border);cursor:pointer;transition:all 0.2s;}
   .dot.active{background:var(--c1);width:20px;border-radius:4px;}
   input[type=file]{display:none;}
+
+  /* PDF BUTTON */
+  .pdf-btn{position:fixed;top:12px;right:16px;background:var(--gold);color:#050a12;border:none;padding:8px 16px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Tahoma',Arial,sans-serif;z-index:999;}
+  .pdf-btn:hover{background:#ffbc00;}
+
+  /* PRINT STYLES */
+  @media print {
+    *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
+    .topbar,.nav,.pdf-btn,.change-btn,.method-btn,input[type=file],.progress-bar{display:none!important;}
+
+    body{background:#0a0f1a!important;color:#e8edf5!important;margin:0;padding:0;}
+    .main{padding:0!important;max-width:100%!important;}
+
+    .slide{display:block!important;page-break-after:always;break-after:page;padding:24px 28px;position:relative;}
+    .slide:last-child{page-break-after:avoid;}
+
+    /* PAGE HEADER BAR */
+    .slide::before{
+      content:'';display:block;height:4px;
+      background:linear-gradient(90deg,#00e5ff,#ff6b35,#ffd166);
+      margin-bottom:20px;border-radius:2px;
+    }
+
+    /* WATERMARK */
+    .slide::after{
+      content:'MIND ONE GOLF';
+      position:fixed;bottom:20px;right:28px;
+      font-family:'Courier New',monospace;font-size:9px;
+      letter-spacing:3px;color:rgba(255,255,255,0.15);
+    }
+
+    /* SLIDE HEADER */
+    .slide-header{margin-bottom:16px;}
+    .slide-num{background:#1a2540!important;border-width:2px!important;color:inherit!important;width:42px!important;height:42px!important;font-size:17px!important;}
+    .slide-meta h2{font-size:17px!important;color:#e8edf5!important;}
+    .phase-tag{font-size:8px!important;letter-spacing:1.5px!important;}
+
+    /* IMAGE */
+    .img-zone{
+      background:#0c1624!important;border:1px solid rgba(255,255,255,0.1)!important;
+      border-radius:12px!important;margin-bottom:14px;min-height:unset!important;
+    }
+    .img-placeholder{display:none!important;}
+    .img-zone img{max-height:320px!important;border-radius:11px!important;}
+
+    /* CONTENT GRID */
+    .content-grid{gap:10px!important;margin-bottom:10px!important;}
+    .box{padding:11px 13px!important;border-radius:10px!important;}
+    .box h4{font-size:8px!important;letter-spacing:1.5px!important;margin-bottom:6px!important;}
+    .box ul li{font-size:11px!important;color:#c8d8e8!important;}
+
+    .box-c1{background:#061820!important;border-color:rgba(0,229,255,0.25)!important;}
+    .box-c1 h4{color:#00e5ff!important;}
+    .box-c2{background:#1a0e08!important;border-color:rgba(255,107,53,0.25)!important;}
+    .box-c2 h4{color:#ff6b35!important;}
+    .box-gold{background:#1a1508!important;border-color:rgba(255,209,102,0.2)!important;}
+    .box-gold h4{color:#ffd166!important;}
+    .box-purple{background:#120a20!important;border-color:rgba(155,93,229,0.25)!important;}
+    .box-purple h4{color:#9b5de5!important;}
+    .box-green{background:#061510!important;border-color:rgba(6,214,160,0.25)!important;}
+    .box-green h4{color:#06d6a0!important;}
+
+    /* FEELING */
+    .feeling{padding:11px 14px!important;border-radius:10px!important;font-size:12px!important;margin-top:8px!important;}
+    .feeling-c1{background:#061820!important;border-color:rgba(0,229,255,0.25)!important;color:#00e5ff!important;}
+    .feeling-c2{background:#1a0e08!important;border-color:rgba(255,107,53,0.25)!important;color:#ff6b35!important;}
+    .feeling-green{background:#061510!important;border-color:rgba(6,214,160,0.25)!important;color:#06d6a0!important;}
+    .feeling-gold{background:#1a1508!important;border-color:rgba(255,209,102,0.2)!important;color:#ffd166!important;}
+    .feeling-icon{font-size:18px!important;}
+
+    /* FAULT */
+    .fault{background:#1a0608!important;border-color:rgba(239,35,60,0.3)!important;border-radius:10px!important;padding:10px 13px!important;margin-top:8px!important;}
+    .fault h4{color:#ef233c!important;font-size:8px!important;}
+    .fault li{color:#e08090!important;font-size:11px!important;}
+
+    /* PAGE NUMBER */
+    @page{margin:12mm 10mm;size:A4 portrait;}
+  }
 </style>
 </head>
 <body>
@@ -101,6 +179,7 @@
   <span class="topbar-title">◆ MIND ONE GOLF · SWING ANALYSIS</span>
   <span class="slide-counter">Slide <span id="curSlide">1</span> / 7</span>
 </div>
+<button class="pdf-btn" onclick="savePDF()">📄 บันทึก PDF</button>
 <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:14.3%"></div></div>
 <div class="main" id="main"></div>
 <div class="nav">
@@ -276,6 +355,9 @@ function goTo(idx){
   window.scrollTo(0,0);
 }
 function changeSlide(dir){var n=current+dir;if(n>=0&&n<7)goTo(n);}
+function savePDF(){
+  window.print();
+}
 buildSlides();
 </script>
 </body>
