@@ -5,11 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mind One Golf — Swing Analysis</title>
 <style>
-  :root {
-    --bg:#050a12; --surface:#0c1624; --border:rgba(255,255,255,0.08);
-    --ink:#e8edf5; --dim:#5a6a82;
-    --c1:#00e5ff; --c2:#ff6b35; --gold:#ffd166; --green:#06d6a0; --purple:#9b5de5;
-  }
+  :root{--bg:#050a12;--surface:#0c1624;--border:rgba(255,255,255,0.08);--ink:#e8edf5;--dim:#5a6a82;--c1:#00e5ff;--c2:#ff6b35;--gold:#ffd166;--green:#06d6a0;--purple:#9b5de5;}
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
   body{background:var(--bg);color:var(--ink);font-family:'Sarabun','Tahoma',Arial,sans-serif;font-size:14px;min-height:100vh;}
   .topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
@@ -26,38 +22,32 @@
   .slide-meta h2{font-size:18px;font-weight:700;margin-bottom:4px;}
   .phase-tag{font-family:'Courier New',monospace;font-size:9px;letter-spacing:2px;padding:2px 10px;border-radius:10px;}
 
-  /* IMAGE ZONE */
-  .img-zone{border-radius:16px;margin-bottom:16px;background:var(--surface);border:2px dashed rgba(0,229,255,0.2);position:relative;overflow:hidden;}
-  .img-zone.has-img{border-style:solid;border-color:var(--border);}
-  .img-zone img{width:100%;max-height:460px;object-fit:contain;display:block;}
-  .img-placeholder{padding:24px 16px;text-align:center;}
-  .img-placeholder .icon{font-size:40px;margin-bottom:10px;opacity:0.35;}
-  .img-placeholder p{color:var(--dim);font-size:13px;margin-bottom:14px;}
-
-  /* UPLOAD BUTTONS */
-  .upload-methods{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:480px;margin:0 auto 14px;}
-  .method-btn{border-radius:12px;padding:14px 10px;text-align:center;cursor:pointer;border:none;font-family:'Tahoma',Arial,sans-serif;font-size:13px;font-weight:700;transition:all 0.2s;}
-  .method-file{background:var(--c1);color:#050a12;}
-  .method-file:hover{background:#00ccee;}
-  .method-url{background:rgba(255,209,102,0.15);color:var(--gold);border:1px solid rgba(255,209,102,0.3);}
-  .method-url:hover{background:rgba(255,209,102,0.25);}
-  .method-icon{font-size:22px;display:block;margin-bottom:6px;}
-  .method-sub{font-size:10px;font-weight:400;opacity:0.8;display:block;margin-top:2px;}
-
-  /* URL INPUT */
-  .url-panel{display:none;max-width:480px;margin:0 auto;padding:0 0 8px;}
-  .url-panel.show{display:block;}
-  .url-row{display:flex;gap:8px;}
-  .url-input{flex:1;background:rgba(255,255,255,0.05);border:1px solid rgba(0,229,255,0.2);color:var(--ink);padding:10px 12px;border-radius:10px;font-size:13px;outline:none;}
-  .url-input:focus{border-color:var(--c1);}
-  .url-input::placeholder{color:var(--dim);}
-  .url-go{background:var(--c1);color:#050a12;border:none;padding:10px 18px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;}
-
-  .change-btn{position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.65);border:1px solid rgba(255,255,255,0.15);color:var(--ink);padding:6px 12px;border-radius:8px;font-size:11px;cursor:pointer;}
+  /* PHOTO GRID */
+  .photo-wrap{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:12px;margin-bottom:16px;}
+  .photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px;}
+  .slot{border-radius:12px;overflow:hidden;background:#070e1a;border:2px dashed rgba(0,229,255,0.18);position:relative;aspect-ratio:3/4;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:border-color 0.2s;}
+  .slot:hover{border-color:rgba(0,229,255,0.5);}
+  .slot.filled{border:2px solid rgba(0,229,255,0.25);cursor:default;}
+  .slot img{width:100%;height:100%;object-fit:cover;display:block;}
+  .slot-ph{text-align:center;padding:10px 6px;pointer-events:none;}
+  .slot-ph .ico{font-size:26px;display:block;margin-bottom:6px;opacity:0.3;}
+  .slot-ph .lbl{font-size:10px;color:var(--dim);line-height:1.4;display:block;}
+  .slot-ph .num{font-size:9px;color:var(--c1);font-family:'Courier New',monospace;letter-spacing:1px;display:block;margin-top:4px;}
+  .slot-del{position:absolute;top:5px;right:5px;background:rgba(0,0,0,0.72);border:none;color:#fff;width:24px;height:24px;border-radius:50%;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+  .slot-del:hover{background:rgba(239,35,60,0.85);}
+  .photo-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .pbtn{border-radius:10px;padding:10px 8px;border:none;font-size:12px;font-weight:700;cursor:pointer;font-family:'Tahoma',Arial,sans-serif;transition:all 0.2s;}
+  .pbtn-main{background:var(--c1);color:#050a12;}
+  .pbtn-main:hover{background:#00ccee;}
+  .pbtn-sec{background:rgba(0,229,255,0.08);color:var(--c1);border:1px solid rgba(0,229,255,0.2);}
+  .pbtn-sec:hover{background:rgba(0,229,255,0.15);}
+  .photo-status{text-align:center;font-size:11px;color:var(--dim);margin-top:8px;}
+  .photo-status b{color:var(--green);}
+  input[type=file]{display:none;}
 
   /* CONTENT */
   .content-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
-  @media(max-width:560px){.content-grid{grid-template-columns:1fr;}}
+  @media(max-width:560px){.content-grid{grid-template-columns:1fr;}.photo-btns{grid-template-columns:1fr;}}
   .box{border-radius:12px;padding:13px 15px;}
   .box h4{font-family:'Courier New',monospace;font-size:9px;letter-spacing:2px;margin-bottom:7px;}
   .box ul{list-style:none;padding:0;}
@@ -84,6 +74,14 @@
   .fault li{font-size:12px;color:#c97a85;padding:2px 0 2px 14px;position:relative;list-style:none;}
   .fault li::before{content:'✕';position:absolute;left:0;font-size:10px;}
 
+  /* PDF BUTTON */
+  .pdf-btn{position:fixed;top:10px;right:16px;background:linear-gradient(135deg,#ffd166,#ff9f1c);color:#1a0e00;border:none;padding:8px 18px 8px 14px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Tahoma',Arial,sans-serif;z-index:999;display:flex;align-items:center;gap:7px;box-shadow:0 2px 12px rgba(255,209,102,0.35);transition:all 0.2s;letter-spacing:0.5px;}
+  .pdf-btn:hover{background:linear-gradient(135deg,#ffe599,#ffb733);box-shadow:0 4px 20px rgba(255,209,102,0.5);transform:translateY(-1px);}
+  .pdf-icon{width:22px;height:22px;background:rgba(0,0,0,0.15);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+  .pdf-label{display:flex;flex-direction:column;line-height:1.2;}
+  .pdf-label span:first-child{font-size:11px;font-weight:700;}
+  .pdf-label span:last-child{font-size:9px;font-weight:400;opacity:0.7;}
+
   /* NAV */
   .nav{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
   .nav-btn{background:var(--surface);border:1px solid var(--border);color:var(--ink);padding:10px 20px;border-radius:10px;font-size:13px;cursor:pointer;font-family:'Tahoma',Arial,sans-serif;}
@@ -93,202 +91,183 @@
   .nav-dots{display:flex;gap:6px;align-items:center;}
   .dot{width:8px;height:8px;border-radius:50%;background:var(--border);cursor:pointer;transition:all 0.2s;}
   .dot.active{background:var(--c1);width:20px;border-radius:4px;}
-  input[type=file]{display:none;}
 
-  /* PDF BUTTON */
-  .pdf-btn{
-    position:fixed;top:10px;right:16px;
-    background:linear-gradient(135deg,#ffd166,#ff9f1c);
-    color:#1a0e00;border:none;
-    padding:8px 18px 8px 14px;
-    border-radius:20px;
-    font-size:12px;font-weight:700;
-    cursor:pointer;
-    font-family:'Tahoma',Arial,sans-serif;
-    z-index:999;
-    display:flex;align-items:center;gap:7px;
-    box-shadow:0 2px 12px rgba(255,209,102,0.35);
-    transition:all 0.2s;
-    letter-spacing:0.5px;
-  }
-  .pdf-btn:hover{
-    background:linear-gradient(135deg,#ffe599,#ffb733);
-    box-shadow:0 4px 20px rgba(255,209,102,0.5);
-    transform:translateY(-1px);
-  }
-  .pdf-btn:active{transform:translateY(0);box-shadow:0 2px 8px rgba(255,209,102,0.3);}
-  .pdf-btn .pdf-icon{
-    width:22px;height:22px;
-    background:rgba(0,0,0,0.15);
-    border-radius:6px;
-    display:flex;align-items:center;justify-content:center;
-    font-size:13px;flex-shrink:0;
-  }
-  .pdf-btn .pdf-label{display:flex;flex-direction:column;line-height:1.2;}
-  .pdf-btn .pdf-label span:first-child{font-size:11px;font-weight:700;}
-  .pdf-btn .pdf-label span:last-child{font-size:9px;font-weight:400;opacity:0.7;}
-
-  /* PRINT STYLES */
-  @media print {
+  /* PRINT */
+  @media print{
     *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
-    .topbar,.nav,.pdf-btn,.change-btn,.method-btn,input[type=file],.progress-bar{display:none!important;}
-
-    body{background:#0a0f1a!important;color:#e8edf5!important;margin:0;padding:0;}
+    .topbar,.nav,.pdf-btn,.slot-del,.photo-btns,.photo-status,.progress-bar{display:none!important;}
+    body{background:#0a0f1a!important;}
     .main{padding:0!important;max-width:100%!important;}
-
-    .slide{display:block!important;page-break-after:always;break-after:page;padding:24px 28px;position:relative;}
-    .slide:last-child{page-break-after:avoid;}
-
-    /* PAGE HEADER BAR */
-    .slide::before{
-      content:'';display:block;height:4px;
-      background:linear-gradient(90deg,#00e5ff,#ff6b35,#ffd166);
-      margin-bottom:20px;border-radius:2px;
-    }
-
-    /* WATERMARK */
-    .slide::after{
-      content:'MIND ONE GOLF';
-      position:fixed;bottom:20px;right:28px;
-      font-family:'Courier New',monospace;font-size:9px;
-      letter-spacing:3px;color:rgba(255,255,255,0.15);
-    }
-
-    /* SLIDE HEADER */
-    .slide-header{margin-bottom:16px;}
-    .slide-num{background:#1a2540!important;border-width:2px!important;color:inherit!important;width:42px!important;height:42px!important;font-size:17px!important;}
-    .slide-meta h2{font-size:17px!important;color:#e8edf5!important;}
-    .phase-tag{font-size:8px!important;letter-spacing:1.5px!important;}
-
-    /* IMAGE */
-    .img-zone{
-      background:#0c1624!important;border:1px solid rgba(255,255,255,0.1)!important;
-      border-radius:12px!important;margin-bottom:14px;min-height:unset!important;
-    }
-    .img-placeholder{display:none!important;}
-    .img-zone img{max-height:320px!important;border-radius:11px!important;}
-
-    /* CONTENT GRID */
-    .content-grid{gap:10px!important;margin-bottom:10px!important;}
-    .box{padding:11px 13px!important;border-radius:10px!important;}
-    .box h4{font-size:8px!important;letter-spacing:1.5px!important;margin-bottom:6px!important;}
-    .box ul li{font-size:11px!important;color:#c8d8e8!important;}
-
-    .box-c1{background:#061820!important;border-color:rgba(0,229,255,0.25)!important;}
-    .box-c1 h4{color:#00e5ff!important;}
-    .box-c2{background:#1a0e08!important;border-color:rgba(255,107,53,0.25)!important;}
-    .box-c2 h4{color:#ff6b35!important;}
-    .box-gold{background:#1a1508!important;border-color:rgba(255,209,102,0.2)!important;}
-    .box-gold h4{color:#ffd166!important;}
-    .box-purple{background:#120a20!important;border-color:rgba(155,93,229,0.25)!important;}
-    .box-purple h4{color:#9b5de5!important;}
-    .box-green{background:#061510!important;border-color:rgba(6,214,160,0.25)!important;}
-    .box-green h4{color:#06d6a0!important;}
-
-    /* FEELING */
-    .feeling{padding:11px 14px!important;border-radius:10px!important;font-size:12px!important;margin-top:8px!important;}
-    .feeling-c1{background:#061820!important;border-color:rgba(0,229,255,0.25)!important;color:#00e5ff!important;}
-    .feeling-c2{background:#1a0e08!important;border-color:rgba(255,107,53,0.25)!important;color:#ff6b35!important;}
-    .feeling-green{background:#061510!important;border-color:rgba(6,214,160,0.25)!important;color:#06d6a0!important;}
-    .feeling-gold{background:#1a1508!important;border-color:rgba(255,209,102,0.2)!important;color:#ffd166!important;}
-    .feeling-icon{font-size:18px!important;}
-
-    /* FAULT */
-    .fault{background:#1a0608!important;border-color:rgba(239,35,60,0.3)!important;border-radius:10px!important;padding:10px 13px!important;margin-top:8px!important;}
-    .fault h4{color:#ef233c!important;font-size:8px!important;}
-    .fault li{color:#e08090!important;font-size:11px!important;}
-
-    /* PAGE NUMBER */
-    @page{margin:12mm 10mm;size:A4 portrait;}
+    .slide{display:block!important;page-break-after:always;break-after:page;padding:20px 24px;}
+    .slide::before{content:'';display:block;height:4px;background:linear-gradient(90deg,#00e5ff,#ff6b35,#ffd166);margin-bottom:16px;border-radius:2px;}
+    .slide::after{content:'MIND ONE GOLF';position:fixed;bottom:16px;right:24px;font-family:'Courier New',monospace;font-size:9px;letter-spacing:3px;color:rgba(255,255,255,0.15);}
+    .photo-wrap{background:#0c1624!important;border-color:rgba(255,255,255,0.08)!important;}
+    .slot{border-color:rgba(0,229,255,0.15)!important;}
+    .slot-ph{display:none!important;}
+    @page{margin:10mm;size:A4 portrait;}
   }
 </style>
 </head>
 <body>
+
 <div class="topbar">
   <span class="topbar-title">◆ MIND ONE GOLF · SWING ANALYSIS</span>
   <span class="slide-counter">Slide <span id="curSlide">1</span> / 7</span>
 </div>
-<button class="pdf-btn" onclick="savePDF()">
-  <div class="pdf-icon">📄</div>
-  <div class="pdf-label">
-    <span>บันทึก PDF</span>
-    <span>ทุก 7 positions</span>
-  </div>
-</button>
 <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:14.3%"></div></div>
+
+<button class="pdf-btn" onclick="window.print()">
+  <div class="pdf-icon">📄</div>
+  <div class="pdf-label"><span>บันทึก PDF</span><span>ทุก 7 positions</span></div>
+</button>
+
 <div class="main" id="main"></div>
+
 <div class="nav">
   <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)" disabled>← ก่อนหน้า</button>
   <div class="nav-dots" id="navDots"></div>
   <button class="nav-btn primary" id="nextBtn" onclick="changeSlide(1)">ถัดไป →</button>
 </div>
+
 <script>
-var slides=[
+var SLIDES=[
   {num:1,color:'#00e5ff',bg:'rgba(0,229,255,0.15)',title:'Top of Backswing — จุด CUE 1 สมบูรณ์',phase:'BACKSWING · สะสมพลัง',phaseColor:'rgba(0,229,255,0.1)',phaseText:'#00e5ff',
-   boxes:[
-     {cls:'box-c1',title:'CUE 1 — FEEL CHECK',items:['ไหล่ซ้าย (lead shoulder) หมุนมาถึงแนวแก้มสะโพกขวาแล้ว ✓','X-Factor สูงสุด — หัวไหล่หมุน ~90° สะโพก ~45°','แขนซ้ายตึง arc กว้างเต็ม — radius ยาวสุด','ข้อมือ hinge สมบูรณ์ ด้ามไม้เกือบขนานพื้น']},
-     {cls:'box-gold',title:'BIOMECHANICS',items:['Shoulder turn ~90° / Hip turn ~45°','พลังงานยืดหยุ่นสะสมใน obliques และ lats','น้ำหนักขาหลัง ~70% — coil position','Knee flex คงที่ ไม่มี sway']},
-     {cls:'box-purple',title:'NEUROSCIENCE',items:['Proprioceptive signal ชัด — สมองรับรู้ว่า "ถึง"','Cerebellum lock ตำแหน่ง — พร้อม transition','ไม่ต้องคิด — ร่างกาย confirm landmark อัตโนมัติ']},
-     {cls:'box-c2',title:'CUE 2 — PREPARE',items:['ระยะต้นคอ → แก้มสะโพกขวา ยังคงที่ ✓','ลำตัวไม่ lean ซ้ายก่อนกำหนด','พร้อม trigger downswing จากขาและสะโพก']}
-   ],feeling:{cls:'feeling-c1',icon:'🎯',text:'<strong>Mind One Cue Word: "ถึง"</strong><br>ความรู้สึก: ไหล่ซ้ายแตะแนวแก้มสะโพกขวา — หยุดตรงนี้ก่อน downswing'},fault:null},
+   boxes:[{cls:'box-c1',title:'CUE 1 — FEEL CHECK',items:['ไหล่ซ้าย (lead shoulder) หมุนมาถึงแนวแก้มสะโพกขวาแล้ว ✓','X-Factor สูงสุด — หัวไหล่หมุน ~90° สะโพก ~45°','แขนซ้ายตึง arc กว้างเต็ม — radius ยาวสุด','ข้อมือ hinge สมบูรณ์ ด้ามไม้เกือบขนานพื้น']},{cls:'box-gold',title:'BIOMECHANICS',items:['Shoulder turn ~90° / Hip turn ~45°','พลังงานยืดหยุ่นสะสมใน obliques และ lats','น้ำหนักขาหลัง ~70% — coil position','Knee flex คงที่ ไม่มี sway']},{cls:'box-purple',title:'NEUROSCIENCE',items:['Proprioceptive signal ชัด — สมองรับรู้ว่า "ถึง"','Cerebellum lock ตำแหน่ง — พร้อม transition','ไม่ต้องคิด — ร่างกาย confirm landmark อัตโนมัติ']},{cls:'box-c2',title:'CUE 2 — PREPARE',items:['ระยะต้นคอ → แก้มสะโพกขวา ยังคงที่ ✓','ลำตัวไม่ lean ซ้ายก่อนกำหนด','พร้อม trigger downswing จากขาและสะโพก']}],
+   feeling:{cls:'feeling-c1',icon:'🎯',text:'<strong>Mind One Cue Word: "ถึง"</strong><br>ความรู้สึก: ไหล่ซ้ายแตะแนวแก้มสะโพกขวา — หยุดตรงนี้ก่อน downswing'},fault:null},
+
   {num:2,color:'#ff6b35',bg:'rgba(255,107,53,0.15)',title:'Early Downswing — Transition เริ่ม CUE 2',phase:'DOWNSWING · เริ่มส่งพลัง',phaseColor:'rgba(255,107,53,0.1)',phaseText:'#ff6b35',
-   boxes:[
-     {cls:'box-c2',title:'CUE 2 — ACTIVATION',items:['ระยะต้นคอ → แก้มสะโพกขวา เริ่ม "ยืด" คงที่ ✓','สะโพกเริ่ม open ก่อนไหล่ — sequential unwind','ลำตัวส่วนบนยังเอียงไปทางขาหลังเล็กน้อย']},
-     {cls:'box-gold',title:'BIOMECHANICS',items:['Ground reaction force ขาซ้ายเพิ่ม — push phase','Hip lead shoulder ~20-30° — kinetic chain ถูกต้อง','Lag ยังดี — ด้ามไม้ชี้ลง trail arm ยังพับ']},
-     {cls:'box-c1',title:'CUE 1 — VERIFY',items:['ผลจาก CUE 1 ที่ดี: ไหล่เริ่มจาก position ที่ถูกต้อง','Arc กว้าง — มือลงมาในเส้นทางที่ลึกและกว้าง']},
-     {cls:'box-purple',title:'NEUROSCIENCE',items:['Transition = จังหวะ cerebellum สั่ง "ยืด"','สมองโหลดต่ำ — มีแค่ 1 instruction: คงระยะ']}
-   ],feeling:{cls:'feeling-c2',icon:'⚡',text:'<strong>Mind One Cue Word: "ยืด"</strong><br>ความรู้สึก: รักษาระยะห่างต้นคอ–สะโพก ขณะสะโพกเริ่มหมุน'},
+   boxes:[{cls:'box-c2',title:'CUE 2 — ACTIVATION',items:['ระยะต้นคอ → แก้มสะโพกขวา เริ่ม "ยืด" คงที่ ✓','สะโพกเริ่ม open ก่อนไหล่ — sequential unwind','ลำตัวส่วนบนยังเอียงไปทางขาหลังเล็กน้อย']},{cls:'box-gold',title:'BIOMECHANICS',items:['Ground reaction force ขาซ้ายเพิ่ม — push phase','Hip lead shoulder ~20-30° — kinetic chain ถูกต้อง','Lag ยังดี — ด้ามไม้ชี้ลง trail arm ยังพับ']},{cls:'box-c1',title:'CUE 1 — VERIFY',items:['ผลจาก CUE 1 ที่ดี: ไหล่เริ่มจาก position ที่ถูกต้อง','Arc กว้าง — มือลงมาในเส้นทางที่ลึกและกว้าง']},{cls:'box-purple',title:'NEUROSCIENCE',items:['Transition = จังหวะ cerebellum สั่ง "ยืด"','สมองโหลดต่ำ — มีแค่ 1 instruction: คงระยะ']}],
+   feeling:{cls:'feeling-c2',icon:'⚡',text:'<strong>Mind One Cue Word: "ยืด"</strong><br>ความรู้สึก: รักษาระยะห่างต้นคอ–สะโพก ขณะสะโพกเริ่มหมุน'},
    fault:{items:['Early extension — สะโพกดัน forward ทำให้ระยะยุบ','Casting — มือเร็วกว่าสะโพก ทำให้เสีย lag']}},
+
   {num:3,color:'#ffd166',bg:'rgba(255,209,102,0.15)',title:'Mid Downswing — Lag Maximum',phase:'DOWNSWING · พลังงานสูงสุด',phaseColor:'rgba(255,209,102,0.1)',phaseText:'#ffd166',
-   boxes:[
-     {cls:'box-c2',title:'CUE 2 — HOLD PHASE',items:['ระยะต้นคอ → แก้มสะโพกขวา คงที่สมบูรณ์ ✓','ต้นคอยังไม่ขยับ forward — สำคัญมาก','ลำตัวเอียง spine angle คงเดิมจาก address']},
-     {cls:'box-gold',title:'BIOMECHANICS',items:['Lag angle สูงสุด — wrist cock ยังคงอยู่','ด้ามไม้ชี้ลง target line — on-plane ✓','Hip กำลัง clear — เปิดพื้นที่ให้แขนผ่าน']},
-     {cls:'box-green',title:'PHYSICS',items:['Double pendulum กำลังทำงาน','ด้ามไม้ = ด้ามแส้ — ยังไม่หยุด','Club head ยัง lag ตาม — พลังงานสะสม']},
-     {cls:'box-purple',title:'NEUROSCIENCE',items:['"ยืด" ยังทำงาน — brain lock ระยะห่าง','ไม่มี conscious thought เพิ่ม — flow state']}
-   ],feeling:{cls:'feeling-c2',icon:'🔒',text:'<strong>Feeling: "ยืด ค้างไว้"</strong><br>ต้นคอต้องไม่ขยับ forward จนกว่าจะถึง impact'},fault:null},
+   boxes:[{cls:'box-c2',title:'CUE 2 — HOLD PHASE',items:['ระยะต้นคอ → แก้มสะโพกขวา คงที่สมบูรณ์ ✓','ต้นคอยังไม่ขยับ forward — สำคัญมาก','ลำตัวเอียง spine angle คงเดิมจาก address']},{cls:'box-gold',title:'BIOMECHANICS',items:['Lag angle สูงสุด — wrist cock ยังคงอยู่','ด้ามไม้ชี้ลง target line — on-plane ✓','Hip กำลัง clear — เปิดพื้นที่ให้แขนผ่าน']},{cls:'box-green',title:'PHYSICS',items:['Double pendulum กำลังทำงาน','ด้ามไม้ = ด้ามแส้ — ยังไม่หยุด','Club head ยัง lag ตาม — พลังงานสะสม']},{cls:'box-purple',title:'NEUROSCIENCE',items:['"ยืด" ยังทำงาน — brain lock ระยะห่าง','ไม่มี conscious thought เพิ่ม — flow state']}],
+   feeling:{cls:'feeling-c2',icon:'🔒',text:'<strong>Feeling: "ยืด ค้างไว้"</strong><br>ต้นคอต้องไม่ขยับ forward จนกว่าจะถึง impact'},fault:null},
+
   {num:4,color:'#ffffff',bg:'rgba(255,255,255,0.1)',title:'Impact — CUE 2 สมบูรณ์ · Whip Effect',phase:'IMPACT · ส่งพลังงาน 100%',phaseColor:'rgba(255,255,255,0.08)',phaseText:'#ffffff',
-   boxes:[
-     {cls:'box-c2',title:'CUE 2 — PEAK RESULT',items:['ต้นคอด้านหน้า v = 0 ✓ — หยุดนิ่งที่ impact','ระยะต้นคอ → สะโพก = คงที่จาก downswing ✓','นี่คือจุดที่ Whip Effect สมบูรณ์']},
-     {cls:'box-green',title:'PHYSICS — WHIP EFFECT',items:['ต้นคอ (ด้ามแส้) หยุด → หัวไม้รับพลัง 100%','Club head speed สูงสุด ณ จุดนี้','Shaft de-loft สมบูรณ์ — hands ahead of ball']},
-     {cls:'box-gold',title:'BIOMECHANICS',items:['Hip open ~45° ไหล่ยังเกือบ square','Lead leg ตรงแล้ว — แกนหมุนมั่นคง','Weight ~80% lead side']},
-     {cls:'box-purple',title:'NEUROSCIENCE',items:['SCM isometric contraction — หยุดนิ่ง','QL + Glutes stabilize — ไม่มี lateral shift']}
-   ],feeling:{cls:'feeling-gold',icon:'💥',text:'<strong>Impact = จุดที่ CUE 2 ให้ผลลัพธ์</strong><br>"ถึง" และ "ยืด" รวมกันที่จุดนี้ในเสี้ยววินาที'},fault:null},
+   boxes:[{cls:'box-c2',title:'CUE 2 — PEAK RESULT',items:['ต้นคอด้านหน้า v = 0 ✓ — หยุดนิ่งที่ impact','ระยะต้นคอ → สะโพก = คงที่จาก downswing ✓','นี่คือจุดที่ Whip Effect สมบูรณ์']},{cls:'box-green',title:'PHYSICS — WHIP EFFECT',items:['ต้นคอ (ด้ามแส้) หยุด → หัวไม้รับพลัง 100%','Club head speed สูงสุด ณ จุดนี้','Shaft de-loft สมบูรณ์ — hands ahead of ball']},{cls:'box-gold',title:'BIOMECHANICS',items:['Hip open ~45° ไหล่ยังเกือบ square','Lead leg ตรงแล้ว — แกนหมุนมั่นคง','Weight ~80% lead side']},{cls:'box-purple',title:'NEUROSCIENCE',items:['SCM isometric contraction — หยุดนิ่ง','QL + Glutes stabilize — ไม่มี lateral shift']}],
+   feeling:{cls:'feeling-gold',icon:'💥',text:'<strong>Impact = จุดที่ CUE 2 ให้ผลลัพธ์</strong><br>"ถึง" และ "ยืด" รวมกันที่จุดนี้ในเสี้ยววินาที'},fault:null},
+
   {num:5,color:'#ff6b35',bg:'rgba(255,107,53,0.15)',title:'Early Follow-Through — Natural Release',phase:'FOLLOW-THROUGH · ปล่อยแรง',phaseColor:'rgba(255,107,53,0.1)',phaseText:'#ff6b35',
-   boxes:[
-     {cls:'box-c2',title:'CUE 2 — RELEASE',items:['หลัง impact ต้นคอเริ่มขยับตามแรง — natural','ระยะห่างยังคงเดิม — ไม่มี collapse ✓']},
-     {cls:'box-gold',title:'BIOMECHANICS',items:['Forearm rotation เกิดขึ้นอัตโนมัติหลัง impact','Lead arm เริ่มพับ — trail arm extend','ขาซ้าย fully extended เป็นแกนหมุน']},
-     {cls:'box-green',title:'PHYSICS',items:['Centrifugal force ดึงแขนให้ extend ออก','Arc กว้างยังคงอยู่ — ball flight ตรง']},
-     {cls:'box-c1',title:'ANATOMY',items:['Subscapularis / pecs เริ่มทำงานใน release','Core ยังคุม spine angle']}
-   ],feeling:{cls:'feeling-green',icon:'🌊',text:'<strong>Feeling: "ปล่อย"</strong><br>ปล่อยให้แรงหมุนพาร่างกายตามเอง'},fault:null},
+   boxes:[{cls:'box-c2',title:'CUE 2 — RELEASE',items:['หลัง impact ต้นคอเริ่มขยับตามแรง — natural','ระยะห่างยังคงเดิม — ไม่มี collapse ✓']},{cls:'box-gold',title:'BIOMECHANICS',items:['Forearm rotation เกิดขึ้นอัตโนมัติหลัง impact','Lead arm เริ่มพับ — trail arm extend','ขาซ้าย fully extended เป็นแกนหมุน']},{cls:'box-green',title:'PHYSICS',items:['Centrifugal force ดึงแขนให้ extend ออก','Arc กว้างยังคงอยู่ — ball flight ตรง']},{cls:'box-c1',title:'ANATOMY',items:['Subscapularis / pecs เริ่มทำงานใน release','Core ยังคุม spine angle']}],
+   feeling:{cls:'feeling-green',icon:'🌊',text:'<strong>Feeling: "ปล่อย"</strong><br>ปล่อยให้แรงหมุนพาร่างกายตามเอง'},fault:null},
+
   {num:6,color:'#9b5de5',bg:'rgba(155,93,229,0.15)',title:'Mid Follow-Through — Extension สมบูรณ์',phase:'FOLLOW-THROUGH · Extension',phaseColor:'rgba(155,93,229,0.1)',phaseText:'#9b5de5',
-   boxes:[
-     {cls:'box-gold',title:'BIOMECHANICS',items:['แขนทั้งสองเหยียดออกเต็ม — maximum extension','Hip fully open หันหน้าไป target','น้ำหนักถ่ายมา lead side ~90%']},
-     {cls:'box-green',title:'PHYSICS',items:['Club arc กว้างสุดในช่วง follow-through','Club face square — ผล D-Plane ดี']},
-     {cls:'box-c2',title:'CUE 2 — VERIFY',items:['ลำตัวส่วนบนเริ่มตาม — ผลจาก CUE 2 ที่ถูกต้อง','ไม่มี reverse pivot — weight transfer สมบูรณ์']},
-     {cls:'box-purple',title:'MENTAL FOCUS',items:['Flow state สมบูรณ์ — ทุกอย่างทำงานอัตโนมัติ']}
-   ],feeling:{cls:'feeling-green',icon:'✅',text:'<strong>Feeling: "ผ่านไปแล้ว"</strong><br>ตำแหน่งนี้จะเกิดขึ้นเองเมื่อ CUE 1+2 ถูกต้อง'},fault:null},
+   boxes:[{cls:'box-gold',title:'BIOMECHANICS',items:['แขนทั้งสองเหยียดออกเต็ม — maximum extension','Hip fully open หันหน้าไป target','น้ำหนักถ่ายมา lead side ~90%']},{cls:'box-green',title:'PHYSICS',items:['Club arc กว้างสุดในช่วง follow-through','Club face square — ผล D-Plane ดี']},{cls:'box-c2',title:'CUE 2 — VERIFY',items:['ลำตัวส่วนบนเริ่มตาม — ผลจาก CUE 2 ที่ถูกต้อง','ไม่มี reverse pivot — weight transfer สมบูรณ์']},{cls:'box-purple',title:'MENTAL FOCUS',items:['Flow state สมบูรณ์ — ทุกอย่างทำงานอัตโนมัติ']}],
+   feeling:{cls:'feeling-green',icon:'✅',text:'<strong>Feeling: "ผ่านไปแล้ว"</strong><br>ตำแหน่งนี้จะเกิดขึ้นเองเมื่อ CUE 1+2 ถูกต้อง'},fault:null},
+
   {num:7,color:'#ffd166',bg:'rgba(255,209,102,0.15)',title:'Finish Position — Balance สมบูรณ์',phase:'FINISH · Proof สุดท้าย',phaseColor:'rgba(255,209,102,0.1)',phaseText:'#ffd166',
-   boxes:[
-     {cls:'box-gold',title:'BIOMECHANICS',items:['ไม้อยู่หลังคอซ้าย — full finish ✓','Hip และไหล่หันหน้าไป target เต็มที่','Lead leg ตรง รับน้ำหนักเกือบ 100%']},
-     {cls:'box-green',title:'BALANCE CHECK',items:['ยืน hold finish ได้ 3+ วินาที ✓','ไม่ล้ม ไม่ต้องก้าวเท้า','proof ว่า CUE 2 ทำงานถูกต้อง']},
-     {cls:'box-c2',title:'CUE 2 — FINAL PROOF',items:['Finish สมดุล = CUE 2 สำเร็จ ✓','ไม่มี sway = ระยะห่างคงที่ตลอด']},
-     {cls:'box-purple',title:'MENTAL FOCUS',items:['Hold finish = สัญญาณยืนยันให้ cerebellum','ทำซ้ำ = myelination เร็วขึ้น']}
-   ],feeling:{cls:'feeling-gold',icon:'🏆',text:'<strong>Finish = Report Card ของสวิง</strong><br>สมดุลดี = CUE 1+2 ถูกต้องทั้งคู่'},fault:null}
+   boxes:[{cls:'box-gold',title:'BIOMECHANICS',items:['ไม้อยู่หลังคอซ้าย — full finish ✓','Hip และไหล่หันหน้าไป target เต็มที่','Lead leg ตรง รับน้ำหนักเกือบ 100%']},{cls:'box-green',title:'BALANCE CHECK',items:['ยืน hold finish ได้ 3+ วินาที ✓','ไม่ล้ม ไม่ต้องก้าวเท้า','proof ว่า CUE 2 ทำงานถูกต้อง']},{cls:'box-c2',title:'CUE 2 — FINAL PROOF',items:['Finish สมดุล = CUE 2 สำเร็จ ✓','ไม่มี sway = ระยะห่างคงที่ตลอด']},{cls:'box-purple',title:'MENTAL FOCUS',items:['Hold finish = สัญญาณยืนยันให้ cerebellum','ทำซ้ำ = myelination เร็วขึ้น']}],
+   feeling:{cls:'feeling-gold',icon:'🏆',text:'<strong>Finish = Report Card ของสวิง</strong><br>สมดุลดี = CUE 1+2 ถูกต้องทั้งคู่'},fault:null}
 ];
 
-var current=0, images=new Array(7).fill(null);
+var current=0;
+var photos=[];
+for(var _i=0;_i<7;_i++) photos.push([null,null,null]);
+var pendingSlot=0;
+var pendingSlide=0;
+var LABELS=['ก่อนสวิง','จุดสำคัญ','ตามสวิง'];
+
+function renderPhotoGrid(si){
+  var slots='';
+  for(var j=0;j<3;j++){
+    if(photos[si][j]){
+      slots+='<div class="slot filled">'+
+        '<img src="'+photos[si][j]+'">'+
+        '<button class="slot-del" onclick="delPhoto('+si+','+j+')">✕</button>'+
+      '</div>';
+    } else {
+      slots+='<div class="slot" onclick="pickOne('+si+','+j+')">'+
+        '<div class="slot-ph">'+
+          '<span class="ico">📷</span>'+
+          '<span class="lbl">'+LABELS[j]+'</span>'+
+          '<span class="num">รูปที่ '+(j+1)+'</span>'+
+        '</div>'+
+      '</div>';
+    }
+  }
+  var filled=photos[si].filter(function(p){return p!==null;}).length;
+  return '<div class="photo-wrap">'+
+    '<div class="photo-grid">'+slots+'</div>'+
+    '<div class="photo-btns">'+
+      '<button class="pbtn pbtn-main" onclick="pickMulti('+si+')">📁 อัปโหลดพร้อมกัน (1-3 รูป)</button>'+
+      '<button class="pbtn pbtn-sec" onclick="pickOne('+si+','+nextEmpty(si)+')">+ เพิ่มทีละรูป</button>'+
+    '</div>'+
+    '<div class="photo-status"><b>'+filled+'/3</b> รูป'+(filled===3?' · ✓ ครบแล้ว':' · ยังเหลือ '+(3-filled)+' ช่อง')+'</div>'+
+    '<input type="file" id="fOne'+si+'" accept="image/*" style="display:none" onchange="onOne(event,'+si+')">'+
+    '<input type="file" id="fMulti'+si+'" accept="image/*" multiple style="display:none" onchange="onMulti(event,'+si+')">'+
+  '</div>';
+}
+
+function nextEmpty(si){
+  for(var j=0;j<3;j++) if(!photos[si][j]) return j;
+  return 0;
+}
+
+function pickOne(si,j){
+  pendingSlide=si; pendingSlot=j;
+  document.getElementById('fOne'+si).click();
+}
+
+function pickMulti(si){
+  pendingSlide=si;
+  document.getElementById('fMulti'+si).click();
+}
+
+function onOne(e,si){
+  var f=e.target.files[0]; if(!f) return;
+  var j=pendingSlot;
+  var r=new FileReader();
+  r.onload=function(ev){photos[si][j]=ev.target.result; refreshGrid(si);};
+  r.readAsDataURL(f);
+  e.target.value='';
+}
+
+function onMulti(e,si){
+  var files=Array.from(e.target.files).slice(0,3);
+  var empty=[];
+  for(var j=0;j<3;j++) if(!photos[si][j]) empty.push(j);
+  var done=0, total=Math.min(files.length,empty.length);
+  if(total===0) return;
+  files.slice(0,total).forEach(function(f,fi){
+    var slot=empty[fi];
+    var r=new FileReader();
+    r.onload=function(ev){
+      photos[si][slot]=ev.target.result;
+      done++;
+      if(done===total) refreshGrid(si);
+    };
+    r.readAsDataURL(f);
+  });
+  e.target.value='';
+}
+
+function delPhoto(si,j){
+  photos[si][j]=null;
+  refreshGrid(si);
+}
+
+function refreshGrid(si){
+  var el=document.getElementById('photoGrid'+si);
+  if(el) el.outerHTML=renderPhotoGrid(si).replace('<div class="photo-wrap">','<div class="photo-wrap" id="photoGrid'+si+'">');
+  // simpler: rebuild whole zone
+  var z=document.getElementById('pgZone'+si);
+  if(z) z.innerHTML=renderPhotoGrid(si);
+}
 
 function buildSlides(){
-  var main=document.getElementById('main'), dots=document.getElementById('navDots');
+  var main=document.getElementById('main'),dots=document.getElementById('navDots');
   main.innerHTML=''; dots.innerHTML='';
-  slides.forEach(function(s,i){
+  SLIDES.forEach(function(s,i){
     var d=document.createElement('div');
     d.className='dot'+(i===0?' active':'');
     d.onclick=(function(idx){return function(){goTo(idx);};})(i);
     dots.appendChild(d);
+
     var el=document.createElement('div');
     el.className='slide'+(i===0?' active':'');
     el.id='slide'+i;
+
     var boxHtml='<div class="content-grid">';
     s.boxes.forEach(function(b){
       boxHtml+='<div class="box '+b.cls+'"><h4>'+b.title+'</h4><ul>';
@@ -296,12 +275,14 @@ function buildSlides(){
       boxHtml+='</ul></div>';
     });
     boxHtml+='</div>';
+
     var faultHtml='';
     if(s.fault){
       faultHtml='<div class="fault"><h4>⚠ FAULT</h4><ul>';
       s.fault.items.forEach(function(it){faultHtml+='<li>'+it+'</li>';});
       faultHtml+='</ul></div>';
     }
+
     el.innerHTML=
       '<div class="slide-header">'+
         '<div class="slide-num" style="background:'+s.bg+';border:2px solid '+s.color+';color:'+s.color+';">'+s.num+'</div>'+
@@ -309,71 +290,13 @@ function buildSlides(){
           '<span class="phase-tag" style="background:'+s.phaseColor+';color:'+s.phaseText+';">'+s.phase+'</span>'+
         '</div>'+
       '</div>'+
-      '<div class="img-zone" id="imgZone'+i+'">'+renderZone(i,s.num)+'</div>'+
+      '<div id="pgZone'+i+'">'+renderPhotoGrid(i)+'</div>'+
       boxHtml+
       '<div class="'+s.feeling.cls+' feeling"><div class="feeling-icon">'+s.feeling.icon+'</div><div>'+s.feeling.text+'</div></div>'+
       faultHtml;
+
     main.appendChild(el);
   });
-}
-
-function renderZone(i,num){
-  if(images[i]){
-    return '<img src="'+images[i]+'" alt="Pos '+(i+1)+'">'+
-           '<button class="change-btn" onclick="resetImg('+i+')">🔄 เปลี่ยนรูป</button>';
-  }
-  return '<div class="img-placeholder">'+
-    '<div class="icon">🖼️</div>'+
-    '<p>เพิ่มรูป Position '+num+'</p>'+
-    '<button class="method-btn method-file" style="max-width:280px;margin:0 auto;display:block;" onclick="triggerFile('+i+')">'+
-      '<span class="method-icon">📁</span>อัปโหลดรูปภาพ'+
-    '</button>'+
-    '<input type="file" id="fileIn'+i+'" accept="image/*" onchange="loadFile(event,'+i+')">'+
-  '</div>';
-}
-
-function triggerFile(i){ document.getElementById('fileIn'+i).click(); }
-
-function toggleUrl(i){
-  var p=document.getElementById('urlPanel'+i);
-  p.classList.toggle('show');
-  if(p.classList.contains('show')) document.getElementById('urlIn'+i).focus();
-}
-
-function loadFile(e,i){
-  var f=e.target.files[0]; if(!f) return;
-  var r=new FileReader();
-  r.onload=function(ev){ setImg(i, ev.target.result); };
-  r.readAsDataURL(f);
-}
-
-function loadUrl(i){
-  var url=document.getElementById('urlIn'+i).value.trim();
-  if(!url){ alert('กรุณาใส่ URL ก่อนครับ'); return; }
-  setImg(i, url);
-}
-
-function setImg(i, src){
-  images[i]=src;
-  var z=document.getElementById('imgZone'+i);
-  z.classList.add('has-img');
-  z.innerHTML='<img src="'+src+'" alt="Pos '+(i+1)+'" onerror="imgErr('+i+')">'+
-               '<button class="change-btn" onclick="resetImg('+i+')">🔄 เปลี่ยนรูป</button>';
-}
-
-function imgErr(i){
-  images[i]=null;
-  var z=document.getElementById('imgZone'+i);
-  z.classList.remove('has-img');
-  z.innerHTML=renderZone(i,slides[i].num);
-  alert('โหลดรูปไม่ได้ครับ — ลอง URL อื่น');
-}
-
-function resetImg(i){
-  images[i]=null;
-  var z=document.getElementById('imgZone'+i);
-  z.classList.remove('has-img');
-  z.innerHTML=renderZone(i,slides[i].num);
 }
 
 function goTo(idx){
@@ -390,9 +313,6 @@ function goTo(idx){
   window.scrollTo(0,0);
 }
 function changeSlide(dir){var n=current+dir;if(n>=0&&n<7)goTo(n);}
-function savePDF(){
-  window.print();
-}
 buildSlides();
 </script>
 </body>
